@@ -2,15 +2,15 @@
 {
     public class UserDataRequest
     {
-        public UserDataRequest(string myGigDataToken, string username, string requestId)
+        public UserDataRequest(string platformToken, string userEmail, string requestId)
         {
-            MyGigDataToken = myGigDataToken;
-            Username = username;
+            PlatformToken = platformToken;
+            UserEmail = userEmail;
             RequestId = requestId;
         }
 
-        public string MyGigDataToken { get; }
-        public string Username { get; }
+        public string PlatformToken { get; }
+        public string UserEmail { get; }
         public string RequestId { get; }
     }
 }

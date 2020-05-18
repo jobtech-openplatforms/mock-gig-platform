@@ -36,7 +36,7 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Controllers
             {
                 if (session
                     .Query<User>()
-                    .Where(u => u.UserName == request.UserName)
+                    .Where(u => u.UserEmail == request.UserEmail)
                     .Any())
                     return BadRequest(new { message = "A user with that UserName already exists." })
                     ;

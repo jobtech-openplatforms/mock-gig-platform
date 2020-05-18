@@ -11,6 +11,6 @@
     public static class UserModelExtensions
     {
         public static UserModel ToGigCentralUserModel(this User user)
-            => new UserModel { DataVersion =  "1.0", Email = user.UserName, Name = user.UserName, Photo = ""};
+            => new UserModel { DataVersion =  "1.0", Email = user.UserEmail, Name = user.UserEmail, Photo = ""};
     }
 }

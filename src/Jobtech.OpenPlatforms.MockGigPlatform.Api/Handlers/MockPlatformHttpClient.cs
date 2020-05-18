@@ -26,7 +26,7 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Handlers
         {
             _users = _users ?? await GetUsersAsync();
 
-            if (_users.Any(u => u.Email == user.UserName))
+            if (_users.Any(u => u.Email == user.UserEmail))
             {
                 return;
             }

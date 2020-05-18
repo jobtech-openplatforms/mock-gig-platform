@@ -52,7 +52,7 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Controllers
 
             var user = new User
             {
-                UserName = $"calle+test{rnd.Next(1, 9999)}@roombler.com",
+                UserEmail = $"calle+test{rnd.Next(1, 9999)}@roombler.com",
                 //UserAccessToken = Guid.NewGuid().ToString(),
                 Interactions = new List<Interaction>
                 {
@@ -368,7 +368,7 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Controllers
             {
                 if (await session
                     .Query<User>()
-                    .Where(u => u.UserName == request.UserName)
+                    .Where(u => u.UserEmail == request.UserEmail)
                     .AnyAsync())
                     return null // this is really ugly, but not putting in time to create result classes for C# for this mock project
                     ;

@@ -2,6 +2,6 @@
 {
     public class GigDataServiceConfig
     {
-        public string MyGigDataToken { get; set; }
+        public string PlatformToken { get; set; }
     }
 }

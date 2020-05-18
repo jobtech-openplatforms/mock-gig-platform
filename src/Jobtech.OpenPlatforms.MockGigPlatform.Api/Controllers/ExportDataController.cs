@@ -22,9 +22,9 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Controllers
             this._documentStore = documentStore.Store;
             _gigDataServiceConfig = gigDataServiceConfig.Value;
 
-            if (string.IsNullOrEmpty(_gigDataServiceConfig?.MyGigDataToken))
+            if (string.IsNullOrEmpty(_gigDataServiceConfig?.PlatformToken))
             {
-                Serilog.Log.Fatal("Missing app setting for MyGigDataToken. Token {MyGigDataToken}", _gigDataServiceConfig?.MyGigDataToken);
+                Serilog.Log.Fatal("Missing app setting for PlatformToken. Token {PlatformToken}", _gigDataServiceConfig?.PlatformToken);
                 throw new Exception("Internal server error. ");
             }
         }
@@ -32,7 +32,7 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Controllers
         [HttpGet("")]
         public async Task<IActionResult> GetUserData()
         {
-            UserDataRequest userDataRequest = new UserDataRequest(Request.Headers["myGigDataToken"], Request.Headers["username"], Request.Headers["requestId"]);
+            UserDataRequest userDataRequest = new UserDataRequest(Request.Headers["platformToken"], Request.Headers["userEmail"], Request.Headers["requestId"]);
             return await GetUserData(userDataRequest);
         }
 
@@ -41,10 +41,10 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Controllers
         {
             Serilog.Log.Information("Request {userDataRequest}", userDataRequest);
 
-            // Check the MyGigDataToken for validity
-            if (userDataRequest?.MyGigDataToken == null || userDataRequest.MyGigDataToken != _gigDataServiceConfig.MyGigDataToken)
+            // Check the PlatformToken for validity
+            if (userDataRequest?.PlatformToken == null || userDataRequest.PlatformToken != _gigDataServiceConfig.PlatformToken)
             {
-                Serilog.Log.Error("Incorrect MyGigDataToken. Token {MyGigDataToken}", _gigDataServiceConfig?.MyGigDataToken);
+                Serilog.Log.Error("Incorrect MyGigDataToken. Token {MyGigDataToken}", _gigDataServiceConfig?.PlatformToken);
                 
                 // There are multiple registrations for the main mock platform 
                 // service now, so disabling this requirement
@@ -55,14 +55,14 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Controllers
             {
                 var user = await session
                     .Query<User>()
-                    .Where(u => u.UserName == userDataRequest.Username)
+                    .Where(u => u.UserEmail == userDataRequest.UserEmail)
                     .FirstOrDefaultAsync();
 
                 if (user == null)
                 {
                     return NotFound(new
                     {
-                        message = $"Unable to find that user. Request Username: '{userDataRequest.Username}'"
+                        message = $"Unable to find that user. Request UserEmail: '{userDataRequest.UserEmail}'"
                     });
                 }
                 Serilog.Log.Information("User", user);
@@ -70,7 +70,7 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Controllers
                 UserDataResponse response = new UserDataResponse {
                     Id = user.Id,
                     RequestId = userDataRequest.RequestId,
-                    UserName = user.UserName,
+                    UserEmail = user.UserEmail,
                     Interactions = user.Interactions,
                     Achievements = user.Achievements
                 };
