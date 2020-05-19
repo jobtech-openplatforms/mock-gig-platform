@@ -44,7 +44,7 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Controllers
             // Check the PlatformToken for validity
             if (userDataRequest?.PlatformToken == null || userDataRequest.PlatformToken != _gigDataServiceConfig.PlatformToken)
             {
-                Serilog.Log.Error("Incorrect MyGigDataToken. Token {MyGigDataToken}", _gigDataServiceConfig?.PlatformToken);
+                Serilog.Log.Error("Incorrect PlatformToken. Token {PlatformToken}", _gigDataServiceConfig?.PlatformToken);
                 
                 // There are multiple registrations for the main mock platform 
                 // service now, so disabling this requirement

@@ -14,6 +14,7 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api
 {
     public class Startup
     {
+        readonly string AllowSpecificOrigins = "_allowSpecificOrigins";
         public Startup(IConfiguration configuration)
         {
             Log.Logger = new LoggerConfiguration()
@@ -29,7 +30,8 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services.AddControllers().AddNewtonsoftJson();
 
             // App Settings
             services.Configure<RavenConfig>(Configuration.GetSection("Raven"));
@@ -45,13 +47,26 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api
                 configure.AddConsole();
             });
 
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: AllowSpecificOrigins,
+                    builder =>
+                    {
+                        builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                    });
+            });
+
             services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.AddConsole();
                 loggingBuilder.AddFilter<ApplicationInsightsLoggerProvider>("", LogLevel.Trace);
                 loggingBuilder.AddApplicationInsights("2bf8e095-407c-4883-9f04-40a38c2568a7");
             });
-            services.AddApplicationInsightsTelemetry("2bf8e095-407c-4883-9f04-40a38c2568a7");
+            //services.AddApplicationInsightsTelemetry("2bf8e095-407c-4883-9f04-40a38c2568a7");
 
             // Document store for Raven
             services.AddSingleton<IDocumentStoreHolder, DocumentStoreHolder>();
@@ -68,6 +83,8 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseRouting();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -78,8 +95,17 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api
             }
 
             app.UseHttpsRedirection();
-            app.UseCors();
-            app.UseMvc();
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers()
+                    .RequireCors(AllowSpecificOrigins);
+            });
+            //app.UseMvc();
         }
     }
 }

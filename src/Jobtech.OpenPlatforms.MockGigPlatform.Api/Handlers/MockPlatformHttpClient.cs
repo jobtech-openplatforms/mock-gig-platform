@@ -15,7 +15,7 @@ namespace Jobtech.OpenPlatforms.MockGigPlatform.Api.Handlers
     {
         private readonly HttpClient _client;
 
-        public MockPlatformHttpClient(HttpClient client, IHostingEnvironment hostingEnvironment)
+        public MockPlatformHttpClient(HttpClient client)
         {
             _client = client;
         }
